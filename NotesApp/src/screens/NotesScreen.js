@@ -68,7 +68,7 @@ export default function NotesApp() {
 
   const saveEdit = () => {
     if (editingId) {
-      const updatedNotes = notes.map(note => 
+      const updatedNotes = notes.map(note =>
         note.id === editingId ? { ...note, text: note.text + '\n' + input, image } : note
       );
       saveNotes(updatedNotes);
@@ -81,10 +81,10 @@ export default function NotesApp() {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.settingsButton} onPress={() => setSettingsModalVisible(true)}>
-          <Ionicons name="settings" size={24} color="black" />
+          <Ionicons name="settings" size={22} color="black" />
         </TouchableOpacity>
-        <Text style={styles.title}>Notes</Text>
       </View>
+
       <FlatList
         data={notes}
         keyExtractor={item => item.id}
@@ -97,10 +97,45 @@ export default function NotesApp() {
           </TouchableOpacity>
         )}
       />
-      <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-        <Text style={styles.addButtonText}>New Note</Text>
+
+      {/* Add Note Button */}
+      <TouchableOpacity
+        style={[styles.addButton, (input.trim() === '' && !image) && styles.disabledButton]}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text style={styles.addButtonText}>Add Note..</Text>
       </TouchableOpacity>
 
+      {/* Add Note Modal */}
+      <Modal visible={modalVisible} animationType="slide">
+        <View style={styles.modalContainer}>
+          <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+            <Ionicons name="close" size={30} color="black" />
+          </TouchableOpacity>
+
+          <TextInput
+            style={styles.textInput}
+            placeholder="Write a note..."
+            onChangeText={setInput}
+          />
+
+          {image && <Image source={{ uri: image }} style={styles.viewNoteImage} />}
+
+          <TouchableOpacity onPress={pickImage}>
+            <Ionicons name="image" size={30} color="blue" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.saveButton, (input.trim() === '' && !image) && styles.disabledButton]}
+            onPress={addNote}
+            disabled={input.trim() === '' && !image}
+          >
+            <Text style={styles.addButtonText}>Save Note</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
+      {/* View Note Modal */}
       <Modal visible={viewModalVisible} animationType="slide">
         <ScrollView contentContainerStyle={styles.modalContainer}>
           {selectedNote && (
@@ -110,6 +145,7 @@ export default function NotesApp() {
               </TouchableOpacity>
               {selectedNote.image && <Image source={{ uri: selectedNote.image }} style={styles.viewNoteImage} />}
               <Text style={styles.noteText}>{selectedNote.text}</Text>
+
               <View style={styles.editContainer}>
                 <TextInput
                   style={styles.textInput}
@@ -127,6 +163,16 @@ export default function NotesApp() {
             </>
           )}
         </ScrollView>
+      </Modal>
+      <Modal visible={settingsModalVisible} animationType="slide">
+        <View style={styles.modalContainer}>
+          <TouchableOpacity style={styles.closeButton} onPress={() => setSettingsModalVisible(false)}>
+            <Ionicons name="close" size={30} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.title}>About Notes App</Text>
+          <Text>Version: 1.0.0</Text>
+          <Text>Contact: support@notesapp.com</Text>
+        </View>
       </Modal>
     </View>
   );
@@ -147,5 +193,6 @@ const styles = StyleSheet.create({
   closeButton: { position: 'absolute', top: 20, right: 20, zIndex: 1 },
   textInput: { borderBottomWidth: 1, width: '80%', padding: 10, marginBottom: 10 },
   editContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: 10, backgroundColor: 'white', position: 'absolute', bottom: 0, left: 0, right: 0 },
-  saveButton: { backgroundColor: 'green', padding: 10, borderRadius: 5, marginLeft: 10 }
+  saveButton: { backgroundColor: 'green', padding: 10, borderRadius: 5, marginLeft: 10 },
+  disabledButton: { backgroundColor: 'gray', opacity: 0.6 }
 });
