@@ -1,16 +1,17 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import NotesScreen from './src/screens/NotesScreen';
+import { SafeAreaView } from 'react-native';
+import NotesScreen from "./src/screens/NotesScreen";
+import NotesApp from "./src/components/NotesApp";
+
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Notes" component={NotesScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaView style={{ flex: 1 }}>
+      <NotesApp />
+    </SafeAreaView>
   );
 }
