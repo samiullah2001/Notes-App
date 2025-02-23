@@ -11,21 +11,16 @@ export default function NotesScreen({
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Notes</Text>
-        <TouchableOpacity style={styles.settingsButton} onPress={onSettingsPress}>
-          <Ionicons name="settings" size={20} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {
-          if (showSearch) {
-            setSearchTerm('');
-          }
-          setShowSearch(!showSearch);
-          }}
-        >
-        <Ionicons name="search" size={24} color="black" />
-        </TouchableOpacity>
-
-      </View>
+  <TouchableOpacity style={styles.leftIcon} onPress={onSettingsPress}>
+    <Ionicons name="settings" size={24} color="black" />
+  </TouchableOpacity>
+  <View style={styles.titleContainer}>
+    <Text style={styles.title}>Notes</Text>
+  </View>
+  <TouchableOpacity style={styles.rightIcon} onPress={() => setShowSearch(!showSearch)}>
+    <Ionicons name="search" size={24} color="black" />
+  </TouchableOpacity>
+</View>
       {/* Conditionally Render Search Bar */}
       {/* Conditionally Render Search Bar */}
       {showSearch && (
