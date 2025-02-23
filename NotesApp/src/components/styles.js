@@ -15,6 +15,9 @@ const styles = StyleSheet.create({
   closeButton: { position: 'absolute', top: 20, right: 20 },
   // settingsButton: { marginRight: 100 },
   // showSearch: { marginLeft: 50 },  
+  categoryFilterContainer: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 20 },
+  categoryFilterText: { fontSize: 16, color: 'blue' },
+  categoryText: { fontSize: 12, color: 'gray', marginTop: 5 },
 });
 
 export default styles;

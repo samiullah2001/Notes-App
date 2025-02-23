@@ -16,6 +16,10 @@ export default function NotesApp() {
   const navigation = useNavigation();
   const [searchTerm, setSearchTerm] = useState('');
   const [showSearch, setShowSearch] = useState(false);
+  const [viewModalVisible, setViewModalVisible] = useState(false);
+  const [selectedNote, setSelectedNote] = useState(null);
+  const [category, setCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   useEffect(() => {
     loadNotes();
@@ -41,10 +45,16 @@ export default function NotesApp() {
 
   const addNote = () => {
     if (input.trim() || image) {
-      const newNote = { id: Date.now().toString(), text: input, image };
+      const newNote = { 
+        id: Date.now().toString(), 
+        text: input, 
+        image, 
+        category: category.trim().toLowerCase() 
+      };
       saveNotes([...notes, newNote]);
       setInput('');
       setImage(null);
+      setCategory(''); // Reset category input
       setModalVisible(false);
     }
   };
@@ -59,10 +69,20 @@ export default function NotesApp() {
       setImage(result.assets[0].uri);
     }
   };
-  const filteredNotes = notes.filter(note =>
-    note.text.toLowerCase().includes(searchTerm.toLowerCase())
-  );  
+  const uniqueCategories = Array.from(new Set(notes.map(note => note.category).filter(c => c)));
 
+  const filteredNotes = notes.filter(note => {
+    const matchesSearch = (note.text || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory 
+      ? (note.category || '').toLowerCase() === selectedCategory.toLowerCase() 
+      : true;
+    return matchesSearch && matchesCategory;
+  });  
+  const onNotePress = (note) => {
+    setSelectedNote(note);
+    setViewModalVisible(true);
+  };
+  
   return (
     // For simplicity, we're rendering the UI here directly.
     <NotesScreen 
@@ -78,6 +98,15 @@ export default function NotesApp() {
       showSearch={showSearch}
       setShowSearch={setShowSearch}
       onSettingsPress={() => navigation.navigate('Settings') }
+      onNotePress={onNotePress}
+      viewModalVisible={viewModalVisible}
+      setViewModalVisible={setViewModalVisible}
+      selectedNote={selectedNote}  
+      selectedCategory={selectedCategory}
+      setSelectedCategory={setSelectedCategory}
+      category={category}
+      setCategory={setCategory}
+      categories={uniqueCategories}
     />
   );
 }

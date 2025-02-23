@@ -6,7 +6,10 @@ import styles from '../components/styles';
 
 export default function NotesScreen({
    notes, input, setInput, modalVisible, setModalVisible, 
-   addNote, pickImage, searchTerm, setSearchTerm, showSearch, setShowSearch, onSettingsPress }) {
+   addNote, pickImage, searchTerm, setSearchTerm, showSearch, setShowSearch, onSettings,
+   onNotePress, onSettingsPress, viewModalVisible, setViewModalVisible, selectedNote,
+   category, setCategory,  selectedCategory, setSelectedCategory, categories
+  }) {
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -21,7 +24,7 @@ export default function NotesScreen({
     <Ionicons name="search" size={24} color="black" />
   </TouchableOpacity>
 </View>
-      {/* Conditionally Render Search Bar */}
+      
       {/* Conditionally Render Search Bar */}
       {showSearch && (
         <TextInput
@@ -34,16 +37,29 @@ export default function NotesScreen({
           }}
         />
       )}
-
+      {/* Dynamic Category Filter UI */}
+      <View style={styles.categoryFilterContainer}>
+        <TouchableOpacity onPress={() => setSelectedCategory('')}>
+          <Text style={styles.categoryFilterText}>All</Text>
+        </TouchableOpacity>
+        {categories.map((cat, index) => (
+          <TouchableOpacity key={index} onPress={() => setSelectedCategory(cat)}>
+            <Text style={styles.categoryFilterText}>{cat}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
       {/* Notes List */}
       <FlatList
         data={notes}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <View style={styles.note}>
-            <Text style={styles.noteText}>{item.text}</Text>
-            
-          </View>
+          <TouchableOpacity onPress={() => onNotePress(item)}>
+            <View style={styles.note}>
+              <Text style={styles.noteText}>{item.text}</Text>
+              {item.category && <Text style={styles.categoryText}>[{item.category}]</Text>}
+              {item.image && <Image source={{ uri: item.image }} style={styles.noteImage} />}
+            </View>
+          </TouchableOpacity>
         )}
       />
 
@@ -61,6 +77,24 @@ export default function NotesScreen({
             value={input}
             onChangeText={setInput}
           />
+          <TextInput 
+          style={styles.textInput} 
+          placeholder="Category (e.g., Personal, Work)"
+          value={category}
+          onChangeText={setCategory}
+          />
+          
+
+          <View style={styles.categoryFilterContainer}>
+            <TouchableOpacity onPress={() => setSelectedCategory('')}>
+              <Text style={styles.categoryFilterText}>All</Text>
+            </TouchableOpacity>
+            {categories.map((cat, index) => (
+            <TouchableOpacity key={index} onPress={() => setSelectedCategory(cat)}>
+              <Text style={styles.categoryFilterText}>{cat}</Text>
+            </TouchableOpacity>
+        ))}
+          </View>
           <TouchableOpacity style={styles.saveButton} onPress={addNote}>
             <Text style={styles.addButtonText}>Save</Text>
           </TouchableOpacity>
@@ -71,6 +105,23 @@ export default function NotesScreen({
             <Ionicons name="image" size={30} color="blue" />
           </TouchableOpacity>
         </View>
+      </Modal>
+      {/* View Note Modal */}
+      <Modal visible={viewModalVisible} animationType="slide">
+        <View style={styles.modalContainer}>
+          {selectedNote && (
+            <>
+            <Text style={styles.noteText}>{selectedNote.text}</Text>
+            {selectedNote.category && <Text style={styles.categoryText}>[{selectedNote.category}]</Text> }
+            {selectedNote.image && <Image source={{ uri: selectedNote.image }} style={styles.noteImage} />}
+          </>
+          )}
+          <TouchableOpacity style={styles.closeButton} onPress={() => setViewModalVisible(false)}>
+            <Ionicons name="close" size={30} color="black" />
+          </TouchableOpacity>
+        </View>
+        
+
       </Modal>
     </View>
   );
