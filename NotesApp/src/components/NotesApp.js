@@ -69,6 +69,22 @@ export default function NotesApp() {
       setImage(result.assets[0].uri);
     }
   };
+  
+  const deleteNote = (noteId) => {
+    const newNotes = notes.filter(note => note.id !== noteId);
+    saveNotes(newNotes);
+  }
+
+  const deleteCategory = (categoryToDelete) => {
+    const newNote = notes.map(note => {
+      if (note.category === categoryToDelete.toLowerCase()) {
+        return { ...note, category: '' };
+        note.category = '';
+      }
+      return note;
+  });
+    saveNotes(newNotes);
+  };
   const uniqueCategories = Array.from(new Set(notes.map(note => note.category).filter(c => c)));
 
   const filteredNotes = notes.filter(note => {
@@ -107,6 +123,8 @@ export default function NotesApp() {
       category={category}
       setCategory={setCategory}
       categories={uniqueCategories}
+      deleteNote={deleteNote}
+      deleteCategory={deleteCategory}
     />
   );
 }

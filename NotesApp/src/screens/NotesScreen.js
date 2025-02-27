@@ -8,7 +8,7 @@ export default function NotesScreen({
    notes, input, setInput, modalVisible, setModalVisible, 
    addNote, pickImage, searchTerm, setSearchTerm, showSearch, setShowSearch, onSettings,
    onNotePress, onSettingsPress, viewModalVisible, setViewModalVisible, selectedNote,
-   category, setCategory,  selectedCategory, setSelectedCategory, categories
+   category, setCategory,  selectedCategory, setSelectedCategory, categories, deleteNote, deleteCategory
   }) {
   return (
     <View style={styles.container}>
@@ -20,9 +20,6 @@ export default function NotesScreen({
   <View style={styles.titleContainer}>
     <Text style={styles.title}>Notes</Text>
   </View>
-  <TouchableOpacity style={styles.rightIcon} onPress={() => setShowSearch(!showSearch)}>
-    <Ionicons name="search" size={24} color="black" />
-  </TouchableOpacity>
 </View>
       
       {/* Conditionally Render Search Bar */}
@@ -43,9 +40,12 @@ export default function NotesScreen({
           <Text style={styles.categoryFilterText}>All</Text>
         </TouchableOpacity>
         {categories.map((cat, index) => (
+          <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity key={index} onPress={() => setSelectedCategory(cat)}>
             <Text style={styles.categoryFilterText}>{cat}</Text>
           </TouchableOpacity>
+          
+  </View>
         ))}
       </View>
       {/* Notes List */}
@@ -58,8 +58,12 @@ export default function NotesScreen({
               <Text style={styles.noteText}>{item.text}</Text>
               {item.category && <Text style={styles.categoryText}>[{item.category}]</Text>}
               {item.image && <Image source={{ uri: item.image }} style={styles.noteImage} />}
+              <TouchableOpacity onPress={() => deleteNote(item.id)} style={{ marginLeft: 10 }}>
+                <Ionicons name="trash" size={15} color="red" />
+              </TouchableOpacity>
             </View>
           </TouchableOpacity>
+          
         )}
       />
 
@@ -90,11 +94,17 @@ export default function NotesScreen({
               <Text style={styles.categoryFilterText}>All</Text>
             </TouchableOpacity>
             {categories.map((cat, index) => (
-            <TouchableOpacity key={index} onPress={() => setSelectedCategory(cat)}>
+          <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity onPress={() => setSelectedCategory(cat)}>
               <Text style={styles.categoryFilterText}>{cat}</Text>
             </TouchableOpacity>
-        ))}
+            <TouchableOpacity onPress={() => deleteCategory(cat)} style={{ marginLeft: 5 }}>
+              <Ionicons name="trash" size={16} color="red" />
+            </TouchableOpacity>
           </View>
+        ))}
+      </View>
+
           <TouchableOpacity style={styles.saveButton} onPress={addNote}>
             <Text style={styles.addButtonText}>Save</Text>
           </TouchableOpacity>
