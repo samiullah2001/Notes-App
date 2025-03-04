@@ -1,6 +1,6 @@
 // src/screens/NotesScreen.js
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, Modal } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, FlatList, Image, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../components/styles';
 
@@ -8,8 +8,17 @@ export default function NotesScreen({
    notes, input, setInput, modalVisible, setModalVisible, 
    addNote, pickImage, searchTerm, setSearchTerm, showSearch, setShowSearch, onSettings,
    onNotePress, onSettingsPress, viewModalVisible, setViewModalVisible, selectedNote,
-   category, setCategory,  selectedCategory, setSelectedCategory, categories, deleteNote, deleteCategory
+   category, setCategory,  selectedCategory, setSelectedCategory, categories, deleteNote, deleteCategory,
+   updateNote
   }) {
+    const [editedText, setEditedText] = useState('');
+
+    useEffect(() => {
+      if (selectedNote) {
+        setEditedText(selectedNote.text);
+      }
+    }, [selectedNote]);
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -116,22 +125,52 @@ export default function NotesScreen({
           </TouchableOpacity>
         </View>
       </Modal>
-      {/* View Note Modal */}
-      <Modal visible={viewModalVisible} animationType="slide">
+ 
+ {/* View Note Modal with Edit Capability */}
+ <Modal visible={viewModalVisible} animationType="slide">
         <View style={styles.modalContainer}>
-          {selectedNote && (
+          {selectedNote ? (
             <>
-            <Text style={styles.noteText}>{selectedNote.text}</Text>
-            {selectedNote.category && <Text style={styles.categoryText}>[{selectedNote.category}]</Text> }
-            {selectedNote.image && <Image source={{ uri: selectedNote.image }} style={styles.noteImage} />}
-          </>
+              <TextInput
+                style={styles.textInput}
+                value={editedText}
+                onChangeText={setEditedText}
+              />
+              {selectedNote.category ? (
+                <Text style={styles.categoryText}>
+                  [{selectedNote.category || ''}]
+                </Text>
+              ) : null}
+              {selectedNote.image && (
+                <Image
+                  source={{ uri: selectedNote.image }}
+                  style={styles.noteImage}
+                />
+              )}
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={() => {
+                  if (selectedNote) {
+                    updateNote(
+                      selectedNote.id,
+                      editedText,
+                      selectedNote.category ? selectedNote.category : '',
+                      selectedNote.image ? selectedNote.image : null
+                    );
+                  }
+                  setViewModalVisible(false);
+                }}
+              >
+                <Text style={styles.addButtonText}>Save Changes</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <Text>No note selected</Text>
           )}
           <TouchableOpacity style={styles.closeButton} onPress={() => setViewModalVisible(false)}>
             <Ionicons name="close" size={30} color="black" />
           </TouchableOpacity>
         </View>
-        
-
       </Modal>
     </View>
   );

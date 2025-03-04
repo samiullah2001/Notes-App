@@ -59,6 +59,22 @@ export default function NotesApp() {
     }
   };
 
+  const updateNote = (noteId, newText, newCategory, newImage) => {
+    const updatedNotes = notes.map(note => {
+      if (!note) return note; // Skip if note is null
+      if (note.id === noteId) {
+        return { 
+          ...note, 
+          text: newText, 
+          category: newCategory || '', // default to empty string if null
+          image: newImage 
+        };
+      }
+      return note;
+    });
+    saveNotes(updatedNotes);
+  };
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -85,15 +101,20 @@ export default function NotesApp() {
   });
     saveNotes(newNotes);
   };
-  const uniqueCategories = Array.from(new Set(notes.map(note => note.category).filter(c => c)));
+  const uniqueCategories = Array.from(new Set(
+    notes.filter(note => note && note.category).map(note => note.category.toLowerCase())
+  ));
+  
 
   const filteredNotes = notes.filter(note => {
+    if (!note) return false;
     const matchesSearch = (note.text || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory 
       ? (note.category || '').toLowerCase() === selectedCategory.toLowerCase() 
       : true;
     return matchesSearch && matchesCategory;
-  });  
+  });
+   
   const onNotePress = (note) => {
     setSelectedNote(note);
     setViewModalVisible(true);
@@ -125,6 +146,7 @@ export default function NotesApp() {
       categories={uniqueCategories}
       deleteNote={deleteNote}
       deleteCategory={deleteCategory}
+      updateNote={updateNote}
     />
   );
 }
