@@ -29,7 +29,17 @@ export default function NotesScreen({
   <View style={styles.titleContainer}>
     <Text style={styles.title}>Notes</Text>
   </View>
-</View>
+  <TouchableOpacity
+    onPress={() => {
+      if (showSearch) {
+        setSearchTerm(''); // Reset search term when hiding search bar
+      }
+      setShowSearch(!showSearch);
+    }}
+  >
+    <Ionicons name="search" size={24} color="black" />
+  </TouchableOpacity>
+  </View>
       
       {/* Conditionally Render Search Bar */}
       {showSearch && (
@@ -43,6 +53,7 @@ export default function NotesScreen({
           }}
         />
       )}
+
       {/* Dynamic Category Filter UI */}
       <View style={styles.categoryFilterContainer}>
         <TouchableOpacity onPress={() => setSelectedCategory('')}>
@@ -53,10 +64,10 @@ export default function NotesScreen({
           <TouchableOpacity key={index} onPress={() => setSelectedCategory(cat)}>
             <Text style={styles.categoryFilterText}>{cat}</Text>
           </TouchableOpacity>
-          
-  </View>
+      </View>
         ))}
       </View>
+
       {/* Notes List */}
       <FlatList
         data={notes}
@@ -65,7 +76,10 @@ export default function NotesScreen({
           <TouchableOpacity onPress={() => onNotePress(item)}>
             <View style={styles.note}>
               <Text style={styles.noteText}>{item.text}</Text>
-              {item.category && <Text style={styles.categoryText}>[{item.category}]</Text>}
+              {item.category ? (
+                <Text style={styles.categoryText}>[{item.category}]</Text>
+              ) : null}
+              {/* {item.category && <Text style={styles.categoryText}>[{item.category}]</Text>} */}
               {item.image && <Image source={{ uri: item.image }} style={styles.noteImage} />}
               <TouchableOpacity onPress={() => deleteNote(item.id)} style={{ marginLeft: 10 }}>
                 <Ionicons name="trash" size={15} color="red" />

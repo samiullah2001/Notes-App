@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   addButtonText: { color: 'white', fontSize: 16 },
   modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
   textInput: { borderBottomWidth: 1, width: '80%', padding: 10, marginBottom: 10 },
-  saveButton: { backgroundColor: 'green', padding: 10, marginBottom: 10, alignItems: 'center' },
+  saveButton: { backgroundColor: 'green', padding: 10, marginBottom: 10, alignItems: 'center', marginTop: 10 },
   closeButton: { position: 'absolute', top: 20, right: 20 },
   // settingsButton: { marginRight: 100 },
   // showSearch: { marginLeft: 50 },  

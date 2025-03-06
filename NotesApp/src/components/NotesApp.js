@@ -89,18 +89,18 @@ export default function NotesApp() {
   const deleteNote = (noteId) => {
     const newNotes = notes.filter(note => note.id !== noteId);
     saveNotes(newNotes);
-  }
+  };
 
   const deleteCategory = (categoryToDelete) => {
-    const newNote = notes.map(note => {
-      if (note.category === categoryToDelete.toLowerCase()) {
-        return { ...note, category: '' };
-        note.category = '';
+    const updatedNotes = notes.map(note => {
+      if (note.category && note.category.toLowerCase() === categoryToDelete.toLowerCase()) {
+        return { ...note, category: '' }; // Clear the category
       }
       return note;
-  });
-    saveNotes(newNotes);
+    });
+    saveNotes(updatedNotes);
   };
+
   const uniqueCategories = Array.from(new Set(
     notes.filter(note => note && note.category).map(note => note.category.toLowerCase())
   ));
